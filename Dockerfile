@@ -17,13 +17,13 @@ FROM node:20-alpine
 # ---- Stage 1: Build ----
 FROM node:18 AS builder
 
-# Set working directory
 WORKDIR /app
 
-# Copy everything
 COPY . .
 
-# Install dependencies
+# Move into the ERP app folder
+WORKDIR /app/apps/erp
+
 RUN npm install --legacy-peer-deps
 
 # Build in production mode
@@ -34,16 +34,13 @@ RUN npm run build
 # ---- Stage 2: Runtime ----
 FROM node:18
 
-WORKDIR /app
+WORKDIR /app/apps/erp
 
-# Copy only built files + production deps
-COPY --from=builder /app .
+COPY --from=builder /app/apps/erp .
 
-# Set environment
 ENV NODE_ENV=production
 ENV NODE_OPTIONS=--max_old_space_size=6144
 
 EXPOSE 3000
 
-# Start production server
 CMD ["npm", "run", "start"]
