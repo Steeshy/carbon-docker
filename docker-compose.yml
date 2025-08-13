@@ -52,6 +52,7 @@ services:
     command: ["/wait-for.sh", "postgres", "npm", "start"]
     volumes:
       - ./wait-for.sh:/wait-for.sh
+      - /opt/carbon/app:/app
 
   pg-backup:
     image: postgres:15-alpine
