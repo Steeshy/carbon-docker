@@ -11,3 +11,5 @@ RUN chmod +x /entrypoint.sh
 
 # Set entrypoint
 ENTRYPOINT ["/entrypoint.sh"]
+
+RUN npm install -g turbo
