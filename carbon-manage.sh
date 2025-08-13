@@ -1,5 +1,16 @@
 #!/bin/sh
 
+# Detect docker compose command
+if docker compose version >/dev/null 2>&1; then
+    DC="docker compose"
+elif docker-compose version >/dev/null 2>&1; then
+    DC="docker-compose"
+else
+    echo "❌ Neither 'docker compose' nor 'docker-compose' is installed."
+    echo "Please install the Docker Compose plugin or binary."
+    exit 1
+fi
+
 while true; do
   clear
   echo "============================="
@@ -18,16 +29,16 @@ while true; do
 
   case $option in
     1)
-      docker compose up -d
+      $DC up -d
       ;;
     2)
-      docker compose down
+      $DC down
       ;;
     3)
-      docker compose down && docker compose up -d
+      $DC down && $DC up -d
       ;;
     4)
-      docker compose logs -f
+      $DC logs -f
       ;;
     5)
       ./backup-postgres.sh
@@ -38,7 +49,7 @@ while true; do
     7)
       read -p "⚠ This will delete all Carbon containers, DB volumes, and networks. Continue? (y/N): " confirm
       if [ "$confirm" = "y" ] || [ "$confirm" = "Y" ]; then
-        docker compose down --volumes --remove-orphans
+        $DC down --volumes --remove-orphans
         docker image prune -f
         docker volume prune -f
         docker network prune -f
